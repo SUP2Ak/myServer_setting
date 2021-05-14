@@ -3,7 +3,7 @@ fx_version 'adamant'
 game 'gta5'
 
 description 'myServer_setting'
-version 'v1.1'
+version 'v2.0 -Standalone'
 
 client_scripts {
 	'cl_setting.lua',
@@ -18,4 +18,9 @@ client_scripts {
     |                   __MyProject__
     |    /Serveur RP : AlphaV RP
  ___|    /FiveM      : myServerESX (qui est dans le liens Discord : FiveM-Dev)					  
-]]
+--]]
+--If you need some bugs pls contact me on my discord, or addme too to give idea to upgrade this script :)
+--[[
+Thanks for your good works pongo1231 to blacklist ped,weapon,car just your loops eat a lot cpu client have optimized for car only, ped and weapon blacklist no work if loop > 0 in this script
+https://forum.cfx.re/t/release-model-blacklist-v1-1/7574
+--]]
