@@ -3,11 +3,12 @@ fx_version 'adamant'
 game 'gta5'
 
 description 'myServer_setting'
-version 'v2.0 -Standalone'
+version 'v2.1 -Standalone'
 
 client_scripts {
+    'config.lua',
+    'recoil_weapon.lua',
 	'cl_setting.lua',
-	'config.lua',
 }
 
 --[[					__SUP2Ak__                            
@@ -23,4 +24,5 @@ client_scripts {
 --[[
 Thanks for your good works pongo1231 to blacklist ped,weapon,car just your loops eat a lot cpu client have optimized for car only, ped and weapon blacklist no work if loop > 0 in this script
 https://forum.cfx.re/t/release-model-blacklist-v1-1/7574
+Thanks @AdrineX and @Spudgun for Weaponry - Realistic Gunplay v1.3, you safe my time for release what's people told me to add in this script have just adapted your script for this script and soon i add realistic hudammo for v1.4 of your script
 --]]

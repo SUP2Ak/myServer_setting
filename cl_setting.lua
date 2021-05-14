@@ -1,7 +1,7 @@
 
 
---[[_________ESX_________]]--
---         Maybe when have time I add utils for esx server
+--[[_________local_________]]--
+local iShoot = false
 --[[_________Function List_________]]--
 --______Function utils______--
 function sendForbiddenMessage(message)
@@ -13,6 +13,34 @@ function _DeleteEntity(entity)
 end
 
 --______Function______--
+--hud realisticAmmo--[WIP]
+--I think creat that with event for more option to get callback in menu or controlpressed [WIP]
+
+--hud weapon reticle--
+local scopedWeapons = 
+{
+    100416529,  -- WEAPON_SNIPERRIFLE
+    205991906,  -- WEAPON_HEAVYSNIPER
+    3342088282, -- WEAPON_MARKSMANRIFLE
+	177293209,  -- WEAPON_HEAVYSNIPER MKII
+	1785463520  -- WEAPON_MARKSMANRIFLE_MK2
+}
+function HashInTable(hash)
+    for k, v in pairs(scopedWeapons) do 
+        if (hash == v) then 
+            return true 
+        end 
+    end 
+    return false 
+end 
+
+function ManageReticle()
+    local ped = GetPlayerPed(-1)
+    local _, hash = GetCurrentPedWeapon(ped, true)
+    if not HashInTable(hash) then 
+        HideHudComponentThisFrame(14)
+	end 
+end 
 --BlackList Cars--
 function checkCar(car)
 	if car then
@@ -69,6 +97,7 @@ function SetWeaponDrops()
         end
     end
 end
+
 --[[_________Thread List_________]]
 --Thread Loop (Wait 2000)
 Citizen.CreateThread(function()        
@@ -169,6 +198,9 @@ end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(1)
+        --if Config.Setting.recoilWeapon == true then
+        --    camWeapon()
+        --end
         if Config.Setting.noCarJack == true then
             if DoesEntityExist(GetVehiclePedIsTryingToEnter(PlayerPedId())) then
                 local veh = GetVehiclePedIsTryingToEnter(PlayerPedId())
@@ -191,7 +223,7 @@ Citizen.CreateThread(function()
             HideHudComponentThisFrame(8)       --VEHICLE_NAME
             HideHudComponentThisFrame(13)       --CASH_CHANGE
         end
-        if Config.Setting.HidehudWeapon == true then
+        if Config.Setting.hideHudWeapon == true then
             if Config.HudWeapon.hudweapon == true then
                 HideHudComponentThisFrame(22)   --HUD_WEAPONS
             end
@@ -203,9 +235,9 @@ Citizen.CreateThread(function()
                 HideHudComponentThisFrame(19)   --WEAPON_WHEEL
             end
             if Config.HudWeapon.reticle == true then
-                HideHudComponentThisFrame(14)   --RETICLE
+                ManageReticle()                   ----RETICLE + noHideScope
             end
-            if Config.HudWeapon.icon == true then
+            if Config.HudWeapon.hudAmmo == true then
                 HideHudComponentThisFrame(2)    --WEAPON_ICON
             end
         end
@@ -262,6 +294,26 @@ Citizen.CreateThread(function()
     end
 end)
 
+--______Thread for my test______--
+--[[
+Citizen.CreateThread(function()      
+    while true do
+        Citizen.Wait(0)
+            local myPed = PlayerPedId()
+            local iShoot = false
+                if IsPedShooting(myPed) then
+                    if IsPedReloading(myPed) then
+                        iShoot = false
+                    if iShoot == true then
+                        HideHudComponentThisFrame(2)    --WEAPON_ICON
+                    else
+                        ShowHudComponentThisFrame(2)
+
+            This code not work have just keep native i want use in it
+            And is my old work, i go update that nice maybe in next update
+    end
+end)
+--]]
 
 --[[					__SUP2Ak__                            
     /Discord SUP2Ak FiveM-Dev : https://discord.gg/hYCR2YKgxB    /  
