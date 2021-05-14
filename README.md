@@ -1,6 +1,6 @@
 #Title#
 ```
-myServer_setting v2.0 -Standalone
+myServer_setting v2.1 -Standalone @SUP2Ak
 @SUP2Ak and @pongo1231 for blacklist system to give me time with that :)
 Thanks @AdrineX and @Spudgun for Weaponry - Realistic Gunplay v1.3 [have ajusted and modified a little your script to adapt it in my script but your work is really nice you give me time for other script :)]
 ```
