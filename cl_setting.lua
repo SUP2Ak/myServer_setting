@@ -1,7 +1,56 @@
---[[_________Function List_________]]
---Fonction BlackList...
 
---Fonction drop d'arme
+
+--[[_________ESX_________]]--
+--         Maybe when have time I add utils for esx server
+--[[_________Function List_________]]--
+--______Function utils______--
+function sendForbiddenMessage(message)
+	TriggerEvent("chatMessage", "", {0, 0, 0}, "^1" .. message)
+end
+
+function _DeleteEntity(entity)
+	Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(entity))
+end
+
+--______Function______--
+--BlackList Cars--
+function checkCar(car)
+	if car then
+		carModel = GetEntityModel(car)
+		carName = GetDisplayNameFromVehicleModel(carModel)
+		if isCarBlacklisted(carModel) then
+			_DeleteEntity(car)
+			sendForbiddenMessage(Config.String.BlacklistCar)
+		end
+	end
+end
+function isCarBlacklisted(model)
+	for _, blacklistedCar in pairs(Config.carBlacklist) do
+		if model == GetHashKey(blacklistedCar) then
+			return true
+		end
+	end
+	return false
+end
+--BlackList Peds--
+function isPedBlacklisted(model)
+	for _, blacklistedPed in pairs(Config.pedblacklist) do
+		if model == GetHashKey(blacklistedPed) then
+			return true
+		end
+	end
+	return false
+end
+--BlackList Weapons--
+function isWeaponBlacklisted(model)
+	for _, blacklistedWeapon in pairs(Config.weaponblacklist) do
+		if model == GetHashKey(blacklistedWeapon) then
+			return true
+		end
+	end
+	return false
+end
+--Drop peds Weapons--
 local pedindex = {}
 function SetWeaponDrops()
     local handle, ped = FindFirstPed()
@@ -16,50 +65,156 @@ function SetWeaponDrops()
 
     for peds,_ in pairs(pedindex) do
         if peds ~= nil then
-            SetPedDropsWeaponsWhenDead(peds, false) 
+            SetPedDropsWeaponsWhenDead(peds, false)
         end
     end
 end
 --[[_________Thread List_________]]
---Thread (Wait 2000)
+--Thread Loop (Wait 2000)
 Citizen.CreateThread(function()        
     while true do
         Citizen.Wait(2000)
-        if Config.Setting.npcDropWeapon == false then
+        if Config.Setting.npcNoDropWeapon == true then
             SetWeaponDrops()
         end
-        if Config.Setting.playerAfkCam == false then
-            N_0xf4f2c0d4ee209e20() -- Joueur
-            N_0x9e4cfff989258472() -- Véhicule
+        if Config.Setting.afkCamPlayer == true then
+            N_0xf4f2c0d4ee209e20() -- Player
+            N_0x9e4cfff989258472() -- Veh
         end
         if Config.Setting.npcRelationship == true then
             local relationshipTypes = Config.ListRelationShipTypes
             local playerHash = GetHashKey('PLAYER')
             for k,groupHash in ipairs(relationshipTypes) do
-                SetRelationshipBetweenGroups(1, playerHash, groupHash)
                 SetRelationshipBetweenGroups(1, groupHash, playerHash)
+            end
+        end
+        if Config.Blacklist == true then
+            local myPed = GetPlayerPed(-1)
+            if Config.Setting.BlacklistCar == true then
+		        if myPed then
+			        checkCar(GetVehiclePedIsIn(myPed, false))
+
+			        x, y, z = table.unpack(GetEntityCoords(myPed, true))
+			        for _, blacklistedCar in pairs(Config.carBlacklist) do
+				        checkCar(GetClosestVehicle(x, y, z, 100.0, GetHashKey(blacklistedCar), 70))
+			        end
+		        end
+            end
+        end
+        if Config.Setting.unStamina == true then
+            local myPlayerSprint = GetPlayerSprintStaminaRemaining(PlayerId())
+            if myPlayerSprint then
+                ResetPlayerStamina(PlayerId())
             end
         end
     end
 end)
 
---Thread (Wait 1)
+--Thread Loop (wait 750) only for Option EAT A LOT ms x) fuck this fucking native!!!! I think my setting is the best... call me on my discord is not nice x) (look credit for my discord)
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(750)
+        --myServer_setting get +0.03ms for that whitout this config, this scope use more CPU client +0.10ms easy
+        if Config.Setting.removeAllCopsCarPed == true then
+            local myPed         = GetPlayerPed(-1)
+            local myPedCoord    = GetEntityCoords(myPed)
+            ClearAreaOfCops(myPedCoord.x, myPedCoord.y, myPedCoord.z, 100.0)
+        end
+    end
+end)
+
+--Thread Loop (Wait 0) [this script work only with loop get wait 0 so this myServer_setting get +0.03ms for that]
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        if Config.Blacklist == true then
+            local myPed = GetPlayerPed(-1)
+            if Config.Setting.BlacklistPed == true then
+                if myPed then
+                    playerModel = GetEntityModel(myPed)
+                    if not prevPlayerModel then
+                        if isPedBlacklisted(prevPlayerModel) then
+                            SetPlayerModel(PlayerId(), GetHashKey(Config.defaultpedmodel))
+                        else
+                            prevPlayerModel = playerModel
+                        end
+                    else
+                        if isPedBlacklisted(playerModel) then
+                            SetPlayerModel(PlayerId(), prevPlayerModel)
+
+                            sendForbiddenMessage(Config.String.BlacklistPed)
+                        end
+                        prevPlayerModel = playerModel
+                    end
+                end
+            end
+            if Config.Setting.BlacklistWeapon == true then
+                if myPed then
+                    nothing, weapon = GetCurrentPedWeapon(myPed, true)      
+                    if Config.disableallweapons then
+                        RemoveAllPedWeapons(myPed, true)
+                    else
+                        if isWeaponBlacklisted(weapon) then
+                            RemoveWeaponFromPed(myPed, weapon)
+                            sendForbiddenMessage(Config.String.BlacklistWeapon)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+--Thread Loop (Wait 1)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(1)
-        if Config.Setting.hudonline == false then
-            HideHudComponentThisFrame(7)
-            HideHudComponentThisFrame(9)
-            HideHudComponentThisFrame(3)
-            HideHudComponentThisFrame(4)
-            HideHudComponentThisFrame(13)
+        if Config.Setting.noCarJack == true then
+            if DoesEntityExist(GetVehiclePedIsTryingToEnter(PlayerPedId())) then
+                local veh = GetVehiclePedIsTryingToEnter(PlayerPedId())
+                local isLock = GetVehicleDoorLockStatus(veh)
+                local ped = GetPedInVehicleSeat(veh, -1)
+                if ped then
+                    SetPedCanBeDraggedOut(ped, false)
+                end
+                if isLock == 2 or isLock == 7 or isLock == 8 then
+                    SetVehicleDoorsLockedForPlayer(veh, PlayerId(), true)
+                end
+            end
+        end
+        if Config.Setting.hideHudonline == true then
+            HideHudComponentThisFrame(3)        --CASH
+            HideHudComponentThisFrame(4)        --MP_CASH
+            HideHudComponentThisFrame(6)        --VEHICLE_NAME
+            HideHudComponentThisFrame(7)        --AREA_NAME
+            HideHudComponentThisFrame(9)        --STREET_NAME
+            HideHudComponentThisFrame(8)       --VEHICLE_NAME
+            HideHudComponentThisFrame(13)       --CASH_CHANGE
+        end
+        if Config.Setting.HidehudWeapon == true then
+            if Config.HudWeapon.hudweapon == true then
+                HideHudComponentThisFrame(22)   --HUD_WEAPONS
+            end
+            if Config.HudWeapon.hudcompenents == true then
+                HideHudComponentThisFrame(21)   --HUD_COMPONENTS
+            end
+            if Config.HudWeapon.wheel == true then
+                HideHudComponentThisFrame(20)   --WEAPON_WHEEL_STATS
+                HideHudComponentThisFrame(19)   --WEAPON_WHEEL
+            end
+            if Config.HudWeapon.reticle == true then
+                HideHudComponentThisFrame(14)   --RETICLE
+            end
+            if Config.HudWeapon.icon == true then
+                HideHudComponentThisFrame(2)    --WEAPON_ICON
+            end
         end
         if Config.Setting.densityMultiplier == true then
             local npcMultiplier     = Config.npcMultiplier
             local npvehMultiplier   = Config.npvehMultiplier
             local pvehMultiplier    = Config.pvehMultiplier
             if Config.Setting.densityNpc == true then
-                SetScenarioPedDensityMultiplierThisFrame(npcMultiplier)
+                SetPedDensityMultiplierThisFrame(npcMultiplier)
                 SetScenarioPedDensityMultiplierThisFrame(npcMultiplier, npcMultiplier)                    
             end
             if Config.Setting.densityVeh == true then
@@ -68,17 +223,17 @@ Citizen.CreateThread(function()
             end
             if Config.Setting.densityVehParked == true then
                 SetParkedVehicleDensityMultiplierThisFrame(pvehMultiplier)
-            end  
+            end
         end
-        if Config.Setting.rewardVeh == false then
+        if Config.Setting.noRewardVeh == true then
             DisablePlayerVehicleRewards(PlayerId())
         end
-        if Config.Setting.npcDispatchService == false then
+        if Config.Setting.npcDispatchService == true then
             for dispatchService = 1, 15 do
                 EnableDispatchService(dispatchService, false) --Liste des dispatchService sur FivemNative description de la native (EnableDispatchService)
             end
         end
-        if Config.Setting.crossHit == false then
+        if Config.Setting.noCrossHit == true then
             if  IsPedArmed(PlayerPedId(), 6) then
                 DisableControlAction(1, 140, true)
                 DisableControlAction(1, 141, true)
@@ -89,12 +244,12 @@ Citizen.CreateThread(function()
             SetWeatherTypePersist("XMAS")
             SetWeatherTypeNowPersist("XMAS")
             SetWeatherTypeNow("XMAS")
-            SetOverrideWeather("XMAS")   
+            SetOverrideWeather("XMAS")
         end
     end
 end)
 
---Thread Without Wait()
+--Thread Without Loop Wait()
 Citizen.CreateThread(function()    
     if Config.Setting.train == true then
         SwitchTrainTrack(0, true) -- Train.
