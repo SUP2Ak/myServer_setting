@@ -8,14 +8,13 @@
 ####	Release date:       15th of July, 2018.
 ####	Update date:		28th of June, 2019.
 ####	Contributors:		AdrineX and Spudgun
-####	Adapted for my MyServer_setting by SUP2Ak +add mod realistic to see ammo only when you shoot (15/05/2021) good works for contributors of this script :)
+####	Adapted for my MyServer_setting by SUP2Ak +add mod for setting damage of weapons (15/05/2021) good works for contributors of this script :)
 ####	Version:        	v1.3  
 ]]--
 
 local global_wait 		= 300 -- Don't change this
 local camera_shake 		= Config.CamShake
 local recoils 			= Config.setRecoils
-
 Citizen.CreateThread(function()
 	local wait = global_wait
 	while true do
@@ -31,7 +30,6 @@ Citizen.CreateThread(function()
 		wait = global_wait
 	end
 end)
-
 Citizen.CreateThread(function()
 	local wait = global_wait
 	math.random(GetGameTimer())

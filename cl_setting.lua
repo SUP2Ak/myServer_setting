@@ -1,7 +1,7 @@
 
 
 --[[_________local_________]]--
-local iShoot = false
+--local iShoot = false
 --[[_________Function List_________]]--
 --______Function utils______--
 function sendForbiddenMessage(message)
@@ -198,9 +198,6 @@ end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(1)
-        --if Config.Setting.recoilWeapon == true then
-        --    camWeapon()
-        --end
         if Config.Setting.noCarJack == true then
             if DoesEntityExist(GetVehiclePedIsTryingToEnter(PlayerPedId())) then
                 local veh = GetVehiclePedIsTryingToEnter(PlayerPedId())
@@ -278,6 +275,23 @@ Citizen.CreateThread(function()
             SetWeatherTypeNow("XMAS")
             SetOverrideWeather("XMAS")
         end
+        if Config.Setting.setDamage == true then
+            for _, v in pairs(Config.Setdamage) do
+                for i = 1, #v.setting, 1 do
+                    local weapon = GetHashKey(v.setting[i].weaponhash)
+                    local values = v.setting[i].value
+                    if(v.Type == 1)then --cac
+                        N_0x4757f00bc6323cfe(weapon, values)
+                    else
+                        N_0x4757f00bc6323cfe(weapon, values)
+                    end
+                end
+            end
+        end
+        if Config.noCritikHits == true then
+            local ply = PlayerPedId()
+            SetPedSuffersCriticalHits(ply, false)
+        end
     end
 end)
 
@@ -294,24 +308,11 @@ Citizen.CreateThread(function()
     end
 end)
 
+
 --______Thread for my test______--
 --[[
-Citizen.CreateThread(function()      
-    while true do
-        Citizen.Wait(0)
-            local myPed = PlayerPedId()
-            local iShoot = false
-                if IsPedShooting(myPed) then
-                    if IsPedReloading(myPed) then
-                        iShoot = false
-                    if iShoot == true then
-                        HideHudComponentThisFrame(2)    --WEAPON_ICON
-                    else
-                        ShowHudComponentThisFrame(2)
+Citizen.CreateThread(function()
 
-            This code not work have just keep native i want use in it
-            And is my old work, i go update that nice maybe in next update
-    end
 end)
 --]]
 

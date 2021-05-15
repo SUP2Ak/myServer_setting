@@ -3,11 +3,12 @@ fx_version 'adamant'
 game 'gta5'
 
 description 'myServer_setting'
-version 'v2.1 -Standalone'
+version 'v2.5 -Standalone'
 
 client_scripts {
     'config.lua',
     'recoil_weapon.lua',
+    --'damage_weapon.lua',
 	'cl_setting.lua',
 }
 

@@ -19,7 +19,8 @@ Config.Setting      = {
     afkCamPlayer            = false,    --true:     désactivera le passage de caméra en mode AFK
     hideHudonline           = false,    --true:     désactivera les hud gtaOnline
     hideHudWeapon           = false,    --true:     active {Config.HudWeapon} pour cacher les hud Weapon GTAonline et roue d'arme selon vos parametre
-    recoilWeapon            = false,    --true:     activera le recul des armes --Work In Progress__ pour ajouter la cette gestion ici de facon opti
+    setDamage				= false, 	--true: 	active le reglage de dêgat des armes --WIP
+	recoilWeapon            = false,    --true:     activera le recul des armes --Work In Progress__ pour ajouter la cette gestion ici de facon opti
     noCrossHit              = false,    --true:     désactivera les coups de cross
     xMas                    = false,    --true:     activera la neige
     removeAllCopsCarPed     = false,    --true:     désactivera le spawn des véhicule Ped de police autour des joueurs (J'ai réussit a trouver le reglagle le plus opti et fonctionnel a la fois je pense car cette option consomme trop de radius sa pic les ms, wait trop long les vehicule spawn et trop court bouffe de ms xD)
@@ -70,6 +71,21 @@ Config.HudWeapon = {
     hudAmmo             = false,     --hide amooHud everytime (If you turnOn this, turnOff realisticAmmo)
     --Ne pas activé realisticAmmo pour le moment
     --[WIP] realisticAmmo       = false, --[WIP]    --KEEP THAT ON FALSE hide ammoHud only when you use weapon (If you turnOn this, turn off Ammo)
+}
+--Weapon damage part--
+Config.noCritikHits = false --if true, then headshot like a torso
+--{need Config.Setting.setDamage = true}
+Config.Setdamage = { --set damage of weapon you want and add weapon you want (-1.0 or 0.0 if you want weapon make 0 damage [dont forget number.number, number only not work])
+	weapon = { --melee weapon
+		setting = {
+			--{weaponhash = "WEAPON_UNARMED", value = 0.0}, --fist 0.0 = nodamage
+			--{weaponhash = "WEAPON_ASSAULTRIFLE", value = 0.00001}, = you need more ammo to kill
+			--{weaponhash = "WEAPON_KNIFE", value = 5.0}, = you one shot
+			--{weaponhash = "WEAPON_RPG", value = 0.0}, = rpg not kill but fire kill
+		},
+		Type = 1
+	},
+		
 }
 --Set CamShake for recoil Weapons {need Config.Setting.recoilWeapon = true}
 Config.CamShake	= 0.1  --Set this between 0.0-1.0
