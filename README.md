@@ -1,4 +1,4 @@
-#Title#
+# myServer_setting [outdated]
 
 - myServer_setting v2.5 -Standalone @SUP2Ak
 
